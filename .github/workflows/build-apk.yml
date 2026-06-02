@@ -1,0 +1,62 @@
+name: Build Android APK
+
+# Workflow qui compile l'APK dans le cloud GitHub (gratuit).
+# Déclenché à chaque push sur main ou manuellement depuis l'onglet Actions.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installation de Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Installation des dépendances npm
+        run: npm ci
+
+      - name: Build web (Vite)
+        run: npm run build
+
+      - name: Installation de JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Configuration Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Synchronisation Capacitor → Android
+        run: npx cap sync android
+
+      - name: Autoriser l'exécution de gradlew
+        run: chmod +x android/gradlew
+
+      - name: Build de l'APK (release non signée)
+        working-directory: android
+        run: ./gradlew assembleRelease
+
+      - name: Build de l'APK (debug, installable directement)
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - name: Upload de l'APK debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: vcds-database-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload de l'APK release
+        uses: actions/upload-artifact@v4
+        with:
+          name: vcds-database-release-apk-unsigned
+          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
