@@ -56,7 +56,7 @@ export const DB = [
   {
     id: 1,
     marque: "Volkswagen",
-    modeles: ["Golf 7 (5G)", "Touran 2 (1T/2T)", "Passat (3G)", "Tiguan (AD1)", "Polo (AW)"],
+    modeles: ["Golf 7 (5G)", "Touran 2 (5T)", "Passat (3G)", "Tiguan (AD1)", "Polo (AW)"],
     plateforme: "MQB",
     categorie: "Start / Stop",
     fonction: "Désactiver le Start & Stop (méthode voltage)",
@@ -2897,7 +2897,7 @@ export const DB = [
   {
     id: 155,
     marque: "Volkswagen",
-    modeles: ["Polo 4 (9N)", "Polo 4 (9N)3", "Fox"],
+    modeles: ["Polo 4 (9N)", "Fox"],
     plateforme: "PQ24",
     categorie: "Éclairage",
     fonction: "Coming Home activation (PQ24)",
@@ -5258,6 +5258,7 @@ export const VEHICULES = [
   { nom: "e-tron Sportback", marque: "Audi", plat: "MLB Evo",  annees: "2020+" },
   { nom: "Q6 e-tron",        marque: "Audi", plat: "PPE",      annees: "2024+" },
   { nom: "A2",               marque: "Audi", plat: "PQ24",     annees: "1999–2005" },
+  { nom: "A3 8L",            marque: "Audi", plat: "PQ34",     annees: "1996–2003" },
   { nom: "A3 Sportback (8V)",marque: "Audi", plat: "MQB",      annees: "2012–2020" },
   { nom: "A3 Cabriolet (8V)",marque: "Audi", plat: "MQB",      annees: "2014–2020" },
   { nom: "A4 Avant (B8)",    marque: "Audi", plat: "MLB",      annees: "2008–2015" },

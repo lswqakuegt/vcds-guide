@@ -6,6 +6,9 @@ dist/
 dist-ssr/
 *.local
 
+# Data pack généré au build depuis src/data.js (npm run gen:data)
+public/data/
+
 # Android (fichiers générés)
 android/.gradle/
 android/app/build/

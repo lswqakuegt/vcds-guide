@@ -1,11 +1,10 @@
 import { useState, useMemo } from "react";
 import "./styles.css";
 import {
-  DB, EXPLICATIONS, CALCULATEURS, CODES_ACCES_INDEX, CODES_DEFAUTS,
-  OBD_LOCATIONS, CATEGORIES, MARQUES, MARQUE_LOGO,
-  MARQUES_ACCUEIL, DIFF_COLOR, CATEGORIE_ICON, GRAVITE_COLOR,
-  VEHICULES, PLAT_COMPAT,
-} from "./data.js";
+  CATEGORIES, MARQUES, MARQUE_LOGO, MARQUES_ACCUEIL,
+  DIFF_COLOR, CATEGORIE_ICON, GRAVITE_COLOR,
+} from "./presentation/uiConstants.js";
+import { useVcdsData } from "./presentation/DataProvider.jsx";
 
 const useStored = (key, init) => {
   const [v, setV] = useState(() => { try { const r = localStorage.getItem(key); return r !== null ? JSON.parse(r) : init; } catch { return init; } });
@@ -13,6 +12,10 @@ const useStored = (key, init) => {
 };
 
 export default function App() {
+  const {
+    DB, EXPLICATIONS, CALCULATEURS, CODES_ACCES_INDEX, CODES_DEFAUTS,
+    OBD_LOCATIONS, VEHICULES, PLAT_COMPAT, dataMeta, syncInfo,
+  } = useVcdsData();
   const [theme, setTheme] = useStored("vcds.theme", "dark");
   const [favs, setFavs] = useStored("vcds.favoris", []);
   const [notes, setNotes] = useStored("vcds.notes", {});
@@ -28,12 +31,12 @@ export default function App() {
   const [qCalc, setQCalc] = useState("");
   const [reading, setReading] = useState(null);
 
-  const cntMarque = useMemo(() => { const c = { Volkswagen: 0, Audi: 0, Seat: 0, Skoda: 0 }; DB.forEach(i => { if (c[i.marque] !== undefined) c[i.marque]++; }); return c; }, []);
-  const cntCat = useMemo(() => { const c = {}; CATEGORIES.forEach(cat => { c[cat] = cat === "Toutes" ? DB.length : DB.filter(i => i.categorie === cat).length; }); return c; }, []);
+  const cntMarque = useMemo(() => { const c = { Volkswagen: 0, Audi: 0, Seat: 0, Skoda: 0 }; DB.forEach(i => { if (c[i.marque] !== undefined) c[i.marque]++; }); return c; }, [DB]);
+  const cntCat = useMemo(() => { const c = {}; CATEGORIES.forEach(cat => { c[cat] = cat === "Toutes" ? DB.length : DB.filter(i => i.categorie === cat).length; }); return c; }, [DB]);
   const vehiculesFiltered = useMemo(() => {
     const list = fMarque === "Toutes" ? VEHICULES : VEHICULES.filter(v => v.marque === fMarque);
-    return list.sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
-  }, [fMarque]);
+    return [...list].sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
+  }, [fMarque, VEHICULES]);
 
   const go = (v) => { setVue(v); setSel(null); };
   const goMarque = (m) => { setFMarque(m); setFCat("Toutes"); setFVehicule(""); setQ(""); setSel(null); setVue("liste"); };
@@ -78,11 +81,11 @@ export default function App() {
       }
       return matchQ && matchMarque && matchCat && matchVeh;
     });
-  }, [q, fMarque, fCat, fVehicule]);
+  }, [q, fMarque, fCat, fVehicule, DB, VEHICULES, PLAT_COMPAT, EXPLICATIONS]);
 
-  const favList = useMemo(() => DB.filter(i => favs.includes(i.id)), [favs]);
-  const dtcF = useMemo(() => { const s = qDtc.toLowerCase(); return !s ? CODES_DEFAUTS : CODES_DEFAUTS.filter(d => d.code.toLowerCase().includes(s) || d.nom.toLowerCase().includes(s) || d.cause.toLowerCase().includes(s)); }, [qDtc]);
-  const calcF = useMemo(() => { const s = qCalc.toLowerCase(); return !s ? CALCULATEURS : CALCULATEURS.filter(c => c.code.toLowerCase().includes(s) || c.nom.toLowerCase().includes(s) || c.desc.toLowerCase().includes(s)); }, [qCalc]);
+  const favList = useMemo(() => DB.filter(i => favs.includes(i.id)), [favs, DB]);
+  const dtcF = useMemo(() => { const s = qDtc.toLowerCase(); return !s ? CODES_DEFAUTS : CODES_DEFAUTS.filter(d => d.code.toLowerCase().includes(s) || d.nom.toLowerCase().includes(s) || d.cause.toLowerCase().includes(s)); }, [qDtc, CODES_DEFAUTS]);
+  const calcF = useMemo(() => { const s = qCalc.toLowerCase(); return !s ? CALCULATEURS : CALCULATEURS.filter(c => c.code.toLowerCase().includes(s) || c.nom.toLowerCase().includes(s) || c.desc.toLowerCase().includes(s)); }, [qCalc, CALCULATEURS]);
 
   const Hdr = ({ t: titre, s: sub }) => (
     <div className="hdr"><div className="hdr-in">
@@ -324,6 +327,13 @@ export default function App() {
         <div className="scard">
           <div className="scard-l">A PROPOS</div>
           <div className="rc-d"><strong style={{color:"var(--t1)"}}>VCDS</strong> v3.0 — {DB.length} procedures · {CODES_DEFAUTS.length} DTC · {CALCULATEURS.length} ECU<br/>VW · Audi · Seat · Skoda</div>
+          <div className="rc-d" style={{marginTop:6}}>
+            Base de donnees v{dataMeta.dataVersion} ({dataMeta.source === "remote" ? "synchronisee" : "embarquee"})
+            {syncInfo.status === "updated" && " · mise a jour appliquee"}
+            {syncInfo.status === "up-to-date" && " · a jour"}
+            {syncInfo.status === "offline" && " · hors ligne"}
+            {syncInfo.status === "app-update-required" && " · nouvelle base disponible, mettre a jour l'app"}
+          </div>
         </div>
       </div>
       <Nav />

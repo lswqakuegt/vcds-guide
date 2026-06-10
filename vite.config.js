@@ -28,7 +28,22 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Les JSON de données sont volontairement HORS précache : leur
+        // fraîcheur est gérée par la couche de sync (src/data/sync.js) +
+        // stockage local. NetworkFirst sert le réseau quand il est là,
+        // le cache sinon.
         globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
+        runtimeCaching: [
+          {
+            urlPattern: /\/data\/[^/]+\.json$/,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "vcds-data",
+              networkTimeoutSeconds: 4,
+              expiration: { maxEntries: 8 },
+            },
+          },
+        ],
       },
     }),
   ],
