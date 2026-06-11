@@ -463,3 +463,23 @@ body {
 .mb16 { margin-bottom:16px; }
 .mb20 { margin-bottom:20px; }
 .wf { width:100%; }
+
+/* ─── BANNIÈRE D'INSTALLATION (adaptée par appareil) ──── */
+.ib {
+  display:flex; gap:12px; align-items:flex-start;
+  background:var(--card); border:1px solid var(--brd);
+  border-radius:var(--r); padding:14px; margin-top:18px;
+  box-shadow:0 2px 10px var(--glow);
+}
+.ib-flat { margin-top:0; border:none; padding:0; box-shadow:none; background:transparent; }
+.ib-icon { font-size:22px; line-height:1.2; }
+.ib-body { flex:1; min-width:0; }
+.ib-title { font-size:13px; font-weight:700; color:var(--t1); margin-bottom:4px; }
+.ib-text { font-size:12px; color:var(--t3); line-height:1.55; }
+.ib-btn { flex:none; margin-top:10px; padding:10px 18px; background:var(--acc); color:#fff; border-color:var(--acc2); }
+.ib-close {
+  flex:none; cursor:pointer; color:var(--tm); font-size:13px;
+  padding:2px 6px; border-radius:6px;
+  -webkit-tap-highlight-color:transparent;
+}
+.ib-close:active { background:var(--chip); }
