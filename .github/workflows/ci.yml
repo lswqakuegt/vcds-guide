@@ -1,0 +1,23 @@
+# CI de pull request : empêche de merger un lockfile désynchronisé, des
+# tests cassés ou une base de données incohérente (le build échoue si
+# l'intégrité des données n'est pas validée — voir scripts/build-datapack.mjs).
+# Les workflows de déploiement ne tournent que sur main : ce contrôle-ci
+# donne la preuve sur Linux AVANT le merge.
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
