@@ -40,6 +40,12 @@ export function DataProvider({ children }) {
   const [syncInfo, setSyncInfo] = useState({ status: "idle" });
 
   useEffect(() => {
+    // Stockage persistant : sans cela, iOS/Safari peut purger les données
+    // locales (favoris, garage, pack synchronisé) après ~7 jours sans visite.
+    try { navigator.storage?.persist?.().catch(() => {}); } catch { /* indispo */ }
+  }, []);
+
+  useEffect(() => {
     let active = true;
     setState({ status: "loading" });
     initVcdsData({

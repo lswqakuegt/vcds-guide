@@ -5,6 +5,7 @@ import {
   DIFF_COLOR, CATEGORIE_ICON, GRAVITE_COLOR,
 } from "./presentation/uiConstants.js";
 import { useVcdsData } from "./presentation/DataProvider.jsx";
+import InstallBanner from "./presentation/InstallBanner.jsx";
 
 const useStored = (key, init) => {
   const [v, setV] = useState(() => { try { const r = localStorage.getItem(key); return r !== null ? JSON.parse(r) : init; } catch { return init; } });
@@ -189,6 +190,7 @@ export default function App() {
               </div>
             ))}
           </div>
+          <InstallBanner />
         </div>
         <Nav />
       </div>
@@ -317,6 +319,10 @@ export default function App() {
             <button className={`thb ${theme==="dark"?"on":""}`} onClick={() => setTheme("dark")}>Sombre</button>
             <button className={`thb ${theme==="light"?"on":""}`} onClick={() => setTheme("light")}>Clair</button>
           </div>
+        </div>
+        <div className="scard">
+          <div className="scard-l">APPLICATION</div>
+          <InstallBanner variant="settings" />
         </div>
         <div className="scard">
           <div className="scard-l">DONNEES</div>
